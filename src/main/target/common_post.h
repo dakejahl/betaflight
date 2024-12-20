@@ -126,6 +126,9 @@
 #ifndef USE_MAG_IST8310
 #define USE_MAG_IST8310
 #endif
+#ifndef USE_MAG_IIS2MDC
+#define USE_MAG_IIS2MDC
+#endif
 
 #endif // END MAG HW defines
 
