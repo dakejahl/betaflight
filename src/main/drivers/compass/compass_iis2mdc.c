@@ -83,7 +83,9 @@ static bool iis2mdcInit(magDev_t *magDev)
 
 static bool iis2mdcRead(magDev_t *magDev, int16_t *magData)
 {
-    struct PACKED {
+    extDevice_t *dev = &magDev->dev;
+
+    struct {
         uint8_t xout0;
         uint8_t xout1;
         uint8_t yout0;
@@ -94,7 +96,6 @@ static bool iis2mdcRead(magDev_t *magDev, int16_t *magData)
         uint8_t tout1;
     } buffer;
 
-    const float range_scale = 100.f / 65.535f; // +/- 50,000 milligauss, 16bit
 
     uint8_t status = 0;
     if (!busReadRegisterBuffer(dev, IIS2MDC_ADDR_STATUS_REG, &status, 1)) {
@@ -105,13 +106,16 @@ static bool iis2mdcRead(magDev_t *magDev, int16_t *magData)
         return false;
     }
 
-    if (!busReadRegisterBuffer(dev, IIS2MDC_ADDR_OUTX_L_REG, buffer, sizeof(buffer))) {
+    if (!busReadRegisterBuffer(dev, IIS2MDC_ADDR_OUTX_L_REG, (uint8_t *) &buffer, sizeof(buffer))) {
         return false;
     }
 
-    magData[X] = ((buffer.xout1 << 8) | buffer.xout0);
-    magData[Y] = ((buffer.yout1 << 8) | buffer.yout0);
-    magData[Z] = -1 * ((buffer.zout1 << 8) | buffer.zout0);
+    // TODO: is this the correct place to apply the scale?
+    const float range_scale = 100.f / 65.535f; // +/- 50,000 milligauss, 16bit
+
+    magData[X] = (((buffer.xout1 << 8) | buffer.xout0)) *  range_scale;
+    magData[Y] = (((buffer.yout1 << 8) | buffer.yout0)) *  range_scale;
+    magData[Z] = (-1 * ((buffer.zout1 << 8) | buffer.zout0)) *  range_scale;
 
     return true;
 }
