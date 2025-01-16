@@ -1,26 +1,4 @@
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include <ctype.h>
-
-#include "platform.h"
 
 #include "fat_standard.h"
 
@@ -92,3 +70,39 @@ void fat_convertFilenameToFATStyle(const char *filename, uint8_t *fatFilename)
          fatFilename++;
      }
 }
+
+/**
+ * Convert the FAT format stored on disk to the style filename given as "prefix.ext".
+ *
+ * filename must point to a buffer which is FAT_FILENAME_LENGTH + 1 bytes long. The buffer IS null-terminated.
+ */
+void fat_convertFATStyleToFilename(const char *fatFilename, char *filename)
+{
+    for (int i = 0; i < 8; i++) {
+        if (*fatFilename == ' ') { //*filename == '\0' || *filename == '.') {
+            *filename = '\0';
+        } else {
+            *filename = *fatFilename;
+            filename++;
+        }
+        fatFilename++;
+    }
+
+    if (*fatFilename != ' ')
+    {
+      *filename = '.';
+      ++filename;
+    }
+
+    for (int i = 0; i < 3; i++) {
+         if (*fatFilename == ' ') {
+             *filename = '\0';
+         } else {
+             *filename = *fatFilename;
+             fatFilename++;
+         }
+         filename++;
+     }
+     *filename = '\0';
+}
+

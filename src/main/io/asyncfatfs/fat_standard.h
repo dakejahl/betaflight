@@ -1,23 +1,3 @@
-/*
- * This file is part of Cleanflight and Betaflight.
- *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
- */
-
 #pragma once
 
 #include <stdint.h>
@@ -57,7 +37,7 @@ typedef enum {
     FAT_FILESYSTEM_TYPE_INVALID,
     FAT_FILESYSTEM_TYPE_FAT12,
     FAT_FILESYSTEM_TYPE_FAT16,
-    FAT_FILESYSTEM_TYPE_FAT32
+    FAT_FILESYSTEM_TYPE_FAT32,
 } fatFilesystemType_e;
 
 typedef struct mbrPartitionEntry_t {
@@ -141,3 +121,4 @@ bool fat_isDirectoryEntryTerminator(fatDirectoryEntry_t *entry);
 bool fat_isDirectoryEntryEmpty(fatDirectoryEntry_t *entry);
 
 void fat_convertFilenameToFATStyle(const char *filename, uint8_t *fatFilename);
+void fat_convertFATStyleToFilename(const char *fatFilename, char *filename);
